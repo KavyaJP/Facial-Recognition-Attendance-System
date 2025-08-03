@@ -29,3 +29,7 @@ Thumbs.db
 
 # VSCode
 .vscode/
+
+# Ignore all CSV and Pickle files
+*.csv
+*.pkl
