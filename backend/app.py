@@ -6,26 +6,40 @@ import cv2
 from recognizer_module import recognizer
 
 app = Flask(__name__)
-CORS(app)
+CORS(app, origins="*", supports_credentials=True)
 
 
 def base64_to_image(base64_str):
     try:
-        img_data = base64.b64decode(base64_str)
-        nparr = np.frombuffer(img_data, np.uint8)
-        return cv2.imdecode(nparr, cv2.IMREAD_COLOR)
-    except:
+        image_data = base64.b64decode(base64_str)
+        np_arr = np.frombuffer(image_data, np.uint8)
+        img = cv2.imdecode(np_arr, cv2.IMREAD_COLOR)
+        return img
+    except Exception as e:
+        print("[ERROR] in base64_to_image:", str(e))
         return None
 
 
+import traceback
+
+
 @app.route("/recognize-face", methods=["POST"])
-def recognize():
-    data = request.get_json()
-    image = base64_to_image(data["image"])
-    if image is None:
-        return jsonify({"error": "Invalid image data"}), 400
-    result = recognizer.recognize_face(image)
-    return jsonify(result)
+def recognize_face():
+    try:
+        data = request.get_json()
+        image_data = data["image"]  # base64 string
+
+        image = base64_to_image(image_data)
+        if image is None:
+            return jsonify({"error": "Invalid image data"}), 400
+
+        result = recognizer.run_face_recognition(image)
+        return jsonify({"message": result})
+
+    except Exception as e:
+        print("Error in /recognize-face:", e)
+        traceback.print_exc()
+        return jsonify({"error": "Internal Server Error"}), 500
 
 
 @app.route("/register-user", methods=["POST"])
