@@ -56,7 +56,7 @@ class Recognizer:
             writer = csv.writer(f)
             writer.writerow([name, now])
 
-    def recognize_face(self, image_np):
+    def run_face_recognition(self, image_np):
         known_data = self.load_encodings()
         face_locations = face_recognition.face_locations(image_np)
         face_encodings = face_recognition.face_encodings(image_np, face_locations)
