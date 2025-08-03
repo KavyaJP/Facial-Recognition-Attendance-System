@@ -1,1 +1,3 @@
-# File is necessary for python to recognizer_module to be accessed like a module
+from .recognizer import Recognizer
+
+recognizer = Recognizer()
